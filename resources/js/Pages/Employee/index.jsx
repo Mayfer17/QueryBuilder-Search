@@ -30,14 +30,18 @@ export default function Index({ employees, query }) { // นิยามฟั�
         router.get('/employee', { search, sort: column, direction: newDirection }); // ส่ง request พร้อมข้อมูลการเรียงลำดับ
     };
 
+
+    /////////// ส่วนแสดงผล ///////////
     return ( // คืนค่าของ component เป็น JSX ที่จะถูกแสดงใน UI
-        <div className="p-6 bg-gray-100 min-h-screen"> {/* ใช้ Tailwind CSS ตกแต่งพื้นหลังและระยะห่าง */}
+        <div className="p-6 bg-gray-100 min-h-screen"> {/* ตกแต่งพื้นหลังและระยะห่าง */}
             <h1 className="text-4xl font-extrabold mb-6 text-center text-black">Employee List</h1> {/* แสดงหัวข้อ "Employee List" พร้อมตกแต่งด้วยฟอนต์ที่โดดเด่น */}
             <form onSubmit={handleSearch} className="mb-6 flex justify-center"> {/* ฟอร์มค้นหาพร้อมจัดวางแบบกลาง */}
                 <input
                     type="text"
                     value={search}
-                    onChange={(e) => setSearch(e.target.value)} // เมื่อมีการเปลี่ยนแปลงใน input จะเรียกใช้ฟังก์ชันนี้
+
+                    //ใช้เพื่ออัปเดตค่าตัวแปร search เมื่อมีการเปลี่ยนแปลงค่าใน input field โดย e.target.value คือค่าที่ผู้ใช้กรอกใน input.
+                    onChange={(e) => setSearch(e.target.value)} // อัปเดตค่า search เมื่อ input เปลี่ยน.
                     className="border rounded-l px-4 py-2 w-80" // ใช้ Tailwind CSS ตกแต่ง input
                 />
                 <button
@@ -56,39 +60,53 @@ export default function Index({ employees, query }) { // นิยามฟั�
                             <th className="py-3 px-6 text-left cursor-pointer" onClick={() => handleSort('first_name')}>Name</th>
                             <th className="py-3 px-6 text-left cursor-pointer" onClick={() => handleSort('last_name')}>Last Name</th>
                             <th className="py-3 px-6 text-left cursor-pointer" onClick={() => handleSort('birth_date')}>Birthday</th>
+                            <th className="py-3 px-6 text-left cursor-pointer" onClick={() => handleSort('gender')}>Gender</th> {/* เพิ่ม Gender */}
                         </tr>
                     </thead>
                     <tbody className="text-gray-700 text-sm font-light">
+                        {/* กำหนดรูปแบบข้อความภายในตาราง */}
                         {employees.data.length === 0 ? (
+                            /* เช็คว่าข้อมูลใน employees มีหรือไม่ */
                             <tr>
-                                <td colSpan="4" className="py-4 px-6 text-center text-gray-500"> {/* กรณีไม่มีข้อมูล */}
+                                <td colSpan="4" className="py-4 px-6 text-center text-gray-500">
+                                    {/* กำหนดให้เซลล์กินพื้นที่ 4 คอลัมน์ พร้อมจัดข้อความไว้กลางเซลล์ */}
                                     ไม่พบข้อมูล
+                                    {/* ข้อความแจ้งเมื่อไม่มีข้อมูล */}
                                 </td>
                             </tr>
                         ) : (
-                            employees.data.map((employee) => ( // แสดงข้อมูลพนักงาน
+
+                            employees.data.map((employee) => (
+                                // ใช้ map เพื่อวนลูปข้อมูลพนักงานแต่ละคนใน employees.data
                                 <tr key={employee.emp_no} className="border-b border-gray-200 hover:bg-gray-100">
+                                    {/* สร้างแถวใหม่ในตารางสำหรับพนักงานแต่ละคน โดยใช้ emp_no */}
                                     <td className="py-3 px-6">{employee.emp_no}</td>
+                                    {/* แสดงหมายเลขพนักงาน */}
                                     <td className="py-3 px-6">{employee.first_name}</td>
+                                    {/* แสดงชื่อพนักงาน */}
                                     <td className="py-3 px-6">{employee.last_name}</td>
+                                    {/* แสดงนามสกุลพนักงาน */}
                                     <td className="py-3 px-6">{employee.birth_date}</td>
+                                    {/* แสดงวันเกิดพนักงาน */}
+                                    <td className="py-3 px-6">{employee.gender}</td>
+                                    {/* เพิ่ม Gender */}
                                 </tr>
                             ))
+
                         )}
                     </tbody>
                 </table>
             </div>
 
-            {/* Pagination Controls */}
+            {/* Pagination Controls Pagination คือการแบ่งข้อมูลเป็นหน้า ๆ เพื่อแสดงผลและโหลดข้อมูลทีละส่วน ลดภาระระบบและช่วยให้ใช้งานง่ายขึ้น.*/}
             <div className="flex justify-between items-center mt-6"> {/* ส่วนควบคุมการเปลี่ยนหน้า */}
                 <button
                     onClick={() => handlePageChange(employees.current_page - 1)} // ย้อนกลับไปหน้าที่แล้ว
                     disabled={employees.current_page === 1} // ปิดปุ่มเมื่ออยู่หน้าสุดท้าย
-                    className={`px-4 py-2 rounded ${
-                        employees.current_page === 1
+                    className={`px-4 py-2 rounded ${employees.current_page === 1
                             ? 'bg-gray-300 cursor-not-allowed' // ถ้าปิดปุ่ม ให้ใช้สีเทา
                             : 'bg-blue-500 text-white hover:bg-blue-600' // ถ้าใช้งานได้ ให้ใช้สีฟ้า
-                    }`}
+                        }`}
                 >
                     Previous
                 </button>
@@ -100,11 +118,10 @@ export default function Index({ employees, query }) { // นิยามฟั�
                 <button
                     onClick={() => handlePageChange(employees.current_page + 1)} // ไปหน้าถัดไป
                     disabled={employees.current_page === employees.last_page} // ปิดปุ่มเมื่ออยู่หน้าสุดท้าย
-                    className={`px-4 py-2 rounded ${
-                        employees.current_page === employees.last_page
+                    className={`px-4 py-2 rounded ${employees.current_page === employees.last_page
                             ? 'bg-gray-300 cursor-not-allowed'
                             : 'bg-blue-500 text-white hover:bg-blue-600'
-                    }`}
+                        }`}
                 >
                     Next
                 </button>

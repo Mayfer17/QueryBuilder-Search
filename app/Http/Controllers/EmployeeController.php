@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-//use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
-use Inertia\Inertia;
+use Illuminate\Support\Facades\DB; // ใช้สำหรับการทำงานกับฐานข้อมูล เช่น การ query ข้อมูลแบบ raw หรือการใช้คำสั่ง SQL
+use Illuminate\Support\Facades\Log; // ใช้สำหรับบันทึก log ข้อความหรือข้อมูลต่าง ๆ เพื่อการ debug หรือการติดตามระบบ
+use Inertia\Inertia; // ใช้สำหรับการ render หน้าผ่าน Inertia.js ใน Laravel เพื่อเชื่อมต่อกับ Frontend framework เช่น React หรือ Vue
+
 
 
 class EmployeeController extends Controller
@@ -15,6 +15,7 @@ class EmployeeController extends Controller
 
     public function index(Request $request) // เพิ่ม Request เข้ามาเป็น parameter
     {
+        //$request ใช้เพื่อดึงและจัดการข้อมูลที่ส่งมาจากฟอร์ม, URL หรือคำขอ HTTP เช่น การดึงข้อมูล (input), ตรวจสอบ (validate), และจัดการไฟล์ (file).
         $query = $request->input('search'); //หาข้อความได้ทั้งชื่อและนามสกุล
 
         // ค้นหาพนักงานที่มีชื่อหรือคำนำหน้าชื่อ หรือ นามสกุล ตรงกับคำค้นหาที่กรอกเข้ามา
@@ -31,9 +32,10 @@ class EmployeeController extends Controller
         //return response($data); //ส่งข้อมูล $data กลับไปในรูปแบบ JSON ให้กับผู้ใช้ผ่าน HTTP Response.
         //return response()->json($data);
         return Inertia::render('Employee/index', [
-            'employees' => $employees,//ข้อมูลพนักงานทั้งหมด
+            'employees' => $employees, // ส่งข้อมูลพนักงานทั้งหมดไปยังหน้า Employee/index
             'query' => $query, //ข้อมูลที่พิมพ์เข้าไปเราต้องการให้ค้างอยู่ในช่องค้นหา
         ]);
+
         // return response($employees);
 
     }
